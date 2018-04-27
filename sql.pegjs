@@ -695,7 +695,7 @@ aggr_fun_smma
 
 smma_arg
   = e:additive_expr { return { expr: e }; }
-  / d:KW_DISTINCT __ c:column_ref { return { distinct: d, expr: c }; }
+  / d:KW_DISTINCT __ e:additive_expr { return { distinct: d, expr: e}; }
 
 KW_SUM_MAX_MIN_AVG
   = KW_SUM / KW_MAX / KW_MIN / KW_AVG
@@ -711,7 +711,7 @@ aggr_fun_count
 
 count_arg
   = e:star_expr { return { expr: e }; }
-  / d:KW_DISTINCT? __ c:column_ref { return { distinct: d, expr: c }; }
+  / d:KW_DISTINCT? __ e:additive_expr { return { distinct: d, expr: e}; }
 
 star_expr
   = "*" { return { type: 'star', value: '*' }; }
@@ -935,6 +935,7 @@ KW_CAST     = "CAST"i     !ident_start
 KW_CHAR     = "CHAR"i     !ident_start { return 'CHAR'; }
 KW_VARCHAR  = "VARCHAR"i  !ident_start { return 'VARCHAR';}
 KW_NUMERIC  = "NUMERIC"i  !ident_start { return 'NUMERIC'; }
+KW_DOUBLE   = "DOUBLE"i   !ident_start { return 'DOUBLE'; }
 KW_DECIMAL  = "DECIMAL"i  !ident_start { return 'DECIMAL'; }
 KW_SIGNED   = "SIGNED"i   !ident_start { return 'SIGNED'; }
 KW_UNSIGNED = "UNSIGNED"i !ident_start { return 'UNSIGNED'; }
@@ -945,6 +946,7 @@ KW_DATE     = "DATE"i     !ident_start { return 'DATE'; }
 KW_TIME     = "TIME"i     !ident_start { return 'TIME'; }
 KW_TIMESTAMP= "TIMESTAMP"i!ident_start { return 'TIMESTAMP'; }
 KW_USER     = "USER"i     !ident_start { return 'USER'; }
+KW_BOOLEAN  = "BOOLEAN"i  !ident_start { return 'BOOLEAN'; }
 
 KW_CURRENT_DATE     = "CURRENT_DATE"i !ident_start { return 'CURRENT_DATE'; }
 KW_CURRENT_TIME     = "CURRENT_TIME"i !ident_start { return 'CURRENT_TIME'; }
@@ -1111,6 +1113,7 @@ data_type
   = character_string_type
   / numeric_type
   / datetime_type
+  / boolean_type
 
 character_string_type
   = t:(KW_CHAR / KW_VARCHAR) __ LPAREN __ l:[0-9]+ __ RPAREN __ {
@@ -1120,7 +1123,10 @@ character_string_type
   / t:KW_VARCHAR { return { dataType: t }; }
 
 numeric_type
-  = t:(KW_NUMERIC / KW_DECIMAL / KW_INT / KW_INTEGER / KW_SMALLINT) { return { dataType: t }; }
+  = t:(KW_NUMERIC / KW_DECIMAL / KW_INT / KW_INTEGER / KW_SMALLINT / KW_DOUBLE) { return { dataType: t }; }
 
 datetime_type
   = t:(KW_DATE / KW_TIME / KW_TIMESTAMP) { return { dataType: t }; }
+
+boolean_type
+  = t:(KW_BOOLEAN) { return { dataType: t }; }
