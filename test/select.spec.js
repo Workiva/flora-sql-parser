@@ -412,7 +412,7 @@ describe('select', () => {
         });
 
         it('should parse map comparison', () => {
-            ast = parser.parse('SELECT * FROM t where t.a[\'my_key\'] = \'hello\'');
+            ast = parser.parse('SELECT * FROM t where "t".a[\'my_key\'] = \'hello\'');
 
             expect(ast.where).to.eql({
                 type: 'binary_expr',
@@ -533,6 +533,16 @@ describe('select', () => {
                 { type: 'column_ref', table: 't', column: 'c' }
             ]);
         });
+
+        it('should parse multiple columns with map ref', () => {
+          ast = parser.parse('SELECT a FROM b WHERE c = 0 GROUP BY d, t.b[\'my_key\'], t.c');
+
+          expect(ast.groupby).to.eql([
+              { type: 'column_ref', table: null, column: 'd' },
+              { type: 'map_ref', table: 't', column: 'b', key: 'my_key' },
+              { type: 'column_ref', table: 't', column: 'c' }
+          ]);
+      });
     });
 
     describe('having clause', () => {
@@ -622,6 +632,16 @@ describe('select', () => {
                 { expr: { type: 'column_ref', table: 't', column: 'c' }, type: 'ASC' }
             ]);
         });
+
+        it('should parse multiple columns with map ref', () => {
+          ast = parser.parse('SELECT a FROM b WHERE c = 0 order BY d, t.b[\'my_key\'] dEsc, t.c');
+
+          expect(ast.orderby).to.eql([
+              { expr: { type: 'column_ref', table: null, column: 'd' },  type: 'ASC' },
+              { expr: { type: 'map_ref', table: 't', column: 'b', key: 'my_key' }, type: 'DESC' },
+              { expr: { type: 'column_ref', table: 't', column: 'c' }, type: 'ASC' }
+          ]);
+      });
 
         it('should parse expressions', () => {
             ast = parser.parse("SELECT a FROM b WHERE c = 0 order BY d, SuM(e)");

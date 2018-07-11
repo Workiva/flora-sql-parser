@@ -339,6 +339,11 @@ describe('AST',() => {
                 expect(getParsedSql('SELECT a FROM t GROUP BY t.b, t.c'))
                     .to.equal('SELECT "a" FROM "t" GROUP BY "t"."b", "t"."c"');
             });
+
+            it('should support group by with map', () => {
+              expect(getParsedSql('SELECT a FROM t group by t.b, t.c[\'hello\']'))
+                  .to.equal('SELECT "a" FROM "t" GROUP BY "t"."b", "t".c[\'hello\']');
+            });
         });
 
         describe('having clause', () => {
@@ -367,6 +372,11 @@ describe('AST',() => {
             it('should support multiple expressions', () => {
                 sql = 'SELECT a FROM t order by id desc, name asc';
                 expect(getParsedSql(sql)).to.equal('SELECT "a" FROM "t" ORDER BY "id" DESC, "name" ASC');
+            });
+
+            it('should support multiple expressions with map', () => {
+              sql = 'SELECT a FROM t order by id desc, "a".name[\'hello\'] asc';
+              expect(getParsedSql(sql)).to.equal('SELECT "a" FROM "t" ORDER BY "id" DESC, "a".name[\'hello\'] ASC');
             });
 
             it('should support complex expressions', () => {
