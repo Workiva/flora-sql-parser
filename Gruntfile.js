@@ -40,7 +40,7 @@ module.exports = function (grunt) {
 
         exec: {
             createParser: {
-                cmd: './node_modules/.bin/pegjs -o build/pegjs-parser.js sql.pegjs'
+                cmd: './node_modules/.bin/pegjs -o pegjs-parser.js sql.pegjs'
             }
         },
     });
