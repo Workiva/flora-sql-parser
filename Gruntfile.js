@@ -1,6 +1,10 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = function (grunt) {
+
+    grunt.file.mkdir(path.join(__dirname, 'build'));
 
     grunt.initConfig({
         eslint: {
@@ -28,7 +32,6 @@ module.exports = function (grunt) {
             coverage: {
                 src: 'test',
                 options: {
-                    excludes: ['pegjs-parser.js'],
                     coverageFolder: 'build',
                     reportFormats: ['clover', 'lcov']
                 }
@@ -37,7 +40,7 @@ module.exports = function (grunt) {
 
         exec: {
             createParser: {
-                cmd: './node_modules/.bin/pegjs -o pegjs-parser.js sql.pegjs'
+                cmd: './node_modules/.bin/pegjs -o build/pegjs-parser.js sql.pegjs'
             }
         },
     });
