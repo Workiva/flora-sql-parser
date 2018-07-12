@@ -327,8 +327,12 @@ where_clause
 group_by_clause
   = KW_GROUP __ KW_BY __ l:column_ref_list { return l; }
 
+column_or_map
+  = map_ref
+  / column_ref
+
 column_ref_list
-  = head:column_ref tail:(__ COMMA __ column_ref)* {
+  = head:column_or_map tail:(__ COMMA __ column_or_map)* {
       return createList(head, tail);
     }
 
@@ -534,7 +538,7 @@ is_op_right
   }
 
 between_op_right
-  = op:KW_BETWEEN __  begin:additive_expr __ KW_AND __ end:additive_expr {
+  = op:between_or_not_between_op __  begin:additive_expr __ KW_AND __ end:additive_expr {
       return {
         op: op,
         right: {
@@ -543,6 +547,10 @@ between_op_right
         }
       };
     }
+
+between_or_not_between_op
+  = nk:(KW_NOT __ KW_BETWEEN) { return nk[0] + ' ' + nk[2]; }
+  / KW_BETWEEN
 
 like_op
   = nk:(KW_NOT __ KW_LIKE) { return nk[0] + ' ' + nk[2]; }

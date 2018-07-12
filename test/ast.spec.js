@@ -286,9 +286,12 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT * FROM "t" WHERE "t".a[\'value\'] = \'something\'');
             });
 
-            it('should support BETWEEN operator', () => {
-                sql = `SELECT a FROM t WHERE id between '1' and 1337`;
-                expect(getParsedSql(sql)).to.equal(`SELECT "a" FROM "t" WHERE "id" BETWEEN '1' AND 1337`);
+          
+            ['BETWEEN', 'NOT BETWEEN'].forEach((operator) => {
+                it(`should support ${operator} operator`, () => {
+                    sql = `SELECT a FROM t WHERE id ${operator.toLowerCase()} '1' and 1337`;
+                    expect(getParsedSql(sql)).to.equal(`SELECT "a" FROM "t" WHERE "id" ${operator} '1' AND 1337`);
+                });
             });
 
             it('should support boolean values', () => {
@@ -339,6 +342,11 @@ describe('AST',() => {
                 expect(getParsedSql('SELECT a FROM t GROUP BY t.b, t.c'))
                     .to.equal('SELECT "a" FROM "t" GROUP BY "t"."b", "t"."c"');
             });
+
+            it('should support group by with map', () => {
+              expect(getParsedSql('SELECT a FROM t group by t.b, t.c[\'hello\']'))
+                  .to.equal('SELECT "a" FROM "t" GROUP BY "t"."b", "t".c[\'hello\']');
+            });
         });
 
         describe('having clause', () => {
@@ -369,6 +377,11 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT "a" FROM "t" ORDER BY "id" DESC, "name" ASC');
             });
 
+            it('should support multiple expressions with map', () => {
+              sql = 'SELECT a FROM t order by id desc, "a".name[\'hello\'] asc';
+              expect(getParsedSql(sql)).to.equal('SELECT "a" FROM "t" ORDER BY "id" DESC, "a".name[\'hello\'] ASC');
+            });
+
             it('should support complex expressions', () => {
                 expect(getParsedSql('SELECT a FROM t ORDER BY rand() ASC'))
                     .to.equal('SELECT "a" FROM "t" ORDER BY rand() ASC');
@@ -391,6 +404,11 @@ describe('AST',() => {
             it('should combine multiple statements', () => {
                 sql = `select 1 union select '1' union select a from t union (select true)`;
                 expect(getParsedSql(sql)).to.equal(`SELECT 1 UNION SELECT '1' UNION SELECT "a" FROM "t" UNION SELECT TRUE`);
+            });
+
+            it('should be supported in expressions', () => {
+                sql = `select * from (select 1 union select 2) t`;
+                expect(getParsedSql(sql)).to.equal(`SELECT * FROM (SELECT 1 UNION SELECT 2) AS "t"`);
             });
         });
     });
