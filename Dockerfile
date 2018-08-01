@@ -28,4 +28,9 @@ RUN echo "Starting the script section" && \
 		npm run build && \
 		npm run test && \
 		echo "script section completed"
+
+RUN mkdir /audit/
+ARG BUILD_ARTIFACTS_AUDIT=/audit/*
+
+RUN npm ls -s --json --depth=10 > /audit/npm.lock || [ $? -eq 1 ] || exit
 FROM scratch
