@@ -80,6 +80,24 @@ describe('select', () => {
                 ]);
             });
 
+            it('should parse replace function expression', () => {
+              ast = parser.parse('SELECT replace(d) FROM t');
+
+              expect(ast.columns).to.eql([
+                  {
+                      expr: {
+                          type: 'function',
+                          name: 'replace',
+                          args: {
+                              type  : 'expr_list',
+                              value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                          }
+                      },
+                      as: null
+                  }
+              ]);
+            });
+
             [
                 'CURRENT_DATE',
                 'CURRENT_TIME',

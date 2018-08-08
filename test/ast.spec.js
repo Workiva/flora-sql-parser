@@ -71,6 +71,33 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal(sql);
             });
 
+            it('should support replace functions', () => {
+              var ast = {
+                type: 'select',
+                options: null,
+                distinct: null,
+                columns: [
+                { 
+                  expr: {
+                    type: 'function',
+                    name: 'replace',
+                    args: {
+                        type  : 'expr_list',
+                        value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                    }
+                  },
+                  as: null
+                }
+                ],
+                from: [{ db: null, table: 't', as: null }],
+                where: null,
+                groupby: null,
+                limit: null
+            };
+            var sql = util.astToSQL(ast);
+            expect(sql).to.equal('SELECT replace("d") FROM "t"');
+          });
+
             it('should support aggregate functions', () => {
                 sql = 'SELECT COUNT(distinct t.id) FROM t';
                 expect(getParsedSql(sql)).to.equal('SELECT COUNT(DISTINCT "t"."id") FROM "t"');
