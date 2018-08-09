@@ -10973,7 +10973,7 @@ function peg$parse(input, options) {
       'ORDER': true,
       'OUTER': true,
 
-      'REPLACE': true,
+      'REPLACE': false,
       'RIGHT': true,
 
       'SELECT': true,

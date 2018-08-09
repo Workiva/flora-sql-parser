@@ -80,6 +80,165 @@ describe('select', () => {
                 ]);
             });
 
+            it('should parse replace function expression', () => {
+              ast = parser.parse('SELECT replace(d) FROM t');
+
+              expect(ast.columns).to.eql([
+                  {
+                      expr: {
+                          type: 'function',
+                          name: 'replace',
+                          args: {
+                              type  : 'expr_list',
+                              value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                          }
+                      },
+                      as: null
+                  }
+              ]);
+            });
+
+            it('should parse case, when, else expression', () => {
+              ast = parser.parse('SELECT case a when 1 then \'one\' when 2 then \'two\' else \'many\' end FROM t');
+              expect(ast.columns).to.eql([
+                  {
+                      expr: {
+                          type: 'case',
+                          expr: {
+                            column: 'a',
+                            type: 'column_ref',
+                            table: null
+                          },
+                          args: [
+                              {
+                                cond: {
+                                  type: 'number',
+                                  value: 1
+                                },
+                                result: {
+                                  type: 'string',
+                                  value: 'one'
+                                },
+                                type: 'when'
+                              },
+                              {
+                                cond: {
+                                  type: 'number',
+                                  value: 2
+                                },
+                                result: {
+                                  type: 'string',
+                                  value: 'two'
+                                },
+                                type: 'when'
+                              },
+                              {
+                                result: {
+                                  type: 'string',
+                                  value: 'many'
+                                },
+                                type: 'else'
+                              }
+                          ]
+                      },
+                      as: null
+                  }
+              ]);
+            });
+
+            it('should parse case, when, else expression with nothing within case', () => {
+              ast = parser.parse('SELECT case when a > 1 then \'one\' when 2 then \'two\' else \'many\' end FROM t');
+              expect(ast.columns).to.eql([
+                  {
+                      expr: {
+                          type: 'case',
+                          expr: null,
+                          args: [
+                              {
+                                cond: {
+                                  type: 'binary_expr',
+                                  left: {
+                                    column: 'a',
+                                    table: null,
+                                    type: 'column_ref'
+                                  },
+                                  right: {
+                                    type: 'number',
+                                    value: 1
+                                  },
+                                  operator: '>'
+                                },
+                                result: {
+                                  type: 'string',
+                                  value: 'one'
+                                },
+                                type: 'when'
+                              },
+                              {
+                                cond: {
+                                  type: 'number',
+                                  value: 2
+                                },
+                                result: {
+                                  type: 'string',
+                                  value: 'two'
+                                },
+                                type: 'when'
+                              },
+                              {
+                                result: {
+                                  type: 'string',
+                                  value: 'many'
+                                },
+                                type: 'else'
+                              }
+                          ]
+                      },
+                      as: null
+                  }
+              ]);
+            });
+
+            it('should handle if function', () => {
+              ast = parser.parse('SELECT if(d > 100, \'banana\', 34) FROM t');
+
+              expect(ast.columns).to.eql([
+                  {
+                      expr: {
+                          type: 'function',
+                          name: 'if',
+                          args: {
+                              type  : 'expr_list',
+                              value : [ 
+                                { 
+                                  type: 'binary_expr', 
+                                  left: {
+                                    column: 'd',
+                                    table: null,
+                                    type: 'column_ref'
+                                  },
+                                  operator: '>',
+                                  right: {
+                                    type: 'number',
+                                    value: 100
+                                  }
+                                },
+                                {
+                                  type: 'string',
+                                  value: 'banana'
+                                },
+                                {
+                                  type: 'number',
+                                  value: 34
+                                }
+                              ]
+                          }
+                      },
+                      as: null
+                  }
+              ]);
+            });
+
             [
                 'CURRENT_DATE',
                 'CURRENT_TIME',

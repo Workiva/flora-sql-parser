@@ -71,6 +71,145 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal(sql);
             });
 
+            it('should support replace functions', () => {
+              var ast = {
+                type: 'select',
+                options: null,
+                distinct: null,
+                columns: [
+                { 
+                  expr: {
+                    type: 'function',
+                    name: 'replace',
+                    args: {
+                        type  : 'expr_list',
+                        value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                    }
+                  },
+                  as: null
+                }
+                ],
+                from: [{ db: null, table: 't', as: null }],
+                where: null,
+                groupby: null,
+                limit: null
+            };
+            var sql = util.astToSQL(ast);
+            expect(sql).to.equal('SELECT replace("d") FROM "t"');
+          });
+
+          it('should support case when functions', () => {
+            var ast = {
+              type: 'select',
+              options: null,
+              distinct: null,
+              columns: [
+                {
+                    expr: {
+                        type: 'case',
+                        expr: null,
+                        args: [
+                            {
+                              cond: {
+                                type: 'binary_expr',
+                                left: {
+                                  column: 'a',
+                                  table: null,
+                                  type: 'column_ref'
+                                },
+                                right: {
+                                  type: 'number',
+                                  value: 1
+                                },
+                                operator: '>'
+                              },
+                              result: {
+                                type: 'string',
+                                value: 'one'
+                              },
+                              type: 'when'
+                            },
+                            {
+                              cond: {
+                                type: 'number',
+                                value: 2
+                              },
+                              result: {
+                                type: 'string',
+                                value: 'two'
+                              },
+                              type: 'when'
+                            },
+                            {
+                              result: {
+                                type: 'string',
+                                value: 'many'
+                              },
+                              type: 'else'
+                            }
+                        ]
+                    },
+                    as: null
+                }
+            ],
+              from: [{ db: null, table: 't', as: null }],
+              where: null,
+              groupby: null,
+              limit: null
+          };
+          var sql = util.astToSQL(ast);
+          expect(sql).to.equal('SELECT CASE WHEN "a" > 1 THEN \'one\' WHEN 2 THEN \'two\' ELSE \'many\' END FROM "t"');
+        });
+
+        it('should support if functions', () => {
+          var ast = {
+            type: 'select',
+            options: null,
+            distinct: null,
+            columns: [
+              {
+                  expr: {
+                      type: 'function',
+                      name: 'if',
+                      args: {
+                          type  : 'expr_list',
+                          value : [ 
+                            { 
+                              type: 'binary_expr', 
+                              left: {
+                                column: 'd',
+                                table: null,
+                                type: 'column_ref'
+                              },
+                              operator: '>',
+                              right: {
+                                type: 'number',
+                                value: 100
+                              }
+                            },
+                            {
+                              type: 'string',
+                              value: 'banana'
+                            },
+                            {
+                              type: 'number',
+                              value: 34
+                            }
+                          ]
+                      }
+                  },
+                  as: null
+              }
+          ],
+            from: [{ db: null, table: 't', as: null }],
+            where: null,
+            groupby: null,
+            limit: null
+        };
+        var sql = util.astToSQL(ast);
+        expect(sql).to.equal('SELECT if("d" > 100, \'banana\', 34) FROM "t"');
+      });
+
             it('should support aggregate functions', () => {
                 sql = 'SELECT COUNT(distinct t.id) FROM t';
                 expect(getParsedSql(sql)).to.equal('SELECT COUNT(DISTINCT "t"."id") FROM "t"');
