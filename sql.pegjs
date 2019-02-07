@@ -818,6 +818,7 @@ single_char
 
 escape_char
   = "\\'"  { return "'";  }
+  / "''"   { return "'";  }
   / '\\"'  { return '"';  }
   / "\\\\" { return "\\"; }
   / "\\/"  { return "/";  }
