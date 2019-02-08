@@ -98,6 +98,25 @@ describe('select', () => {
               ]);
             });
 
+            it('should handle escaping doubled up single quotes', () => {
+              ast = parser.parse("SELECT concat('''', 'hello') FROM t");
+              expect(ast.columns).to.eql([
+                {
+                  expr: {
+                      type: 'function',
+                      name: 'concat',
+                      args: {
+                          type  : 'expr_list',
+                          value : [ 
+                            { type: 'string', value: "'"},
+                            { type: 'string', value: 'hello' } ]
+                      }
+                  },
+                  as: null
+              }
+              ]);
+            });
+
             it('should parse case, when, else expression', () => {
               ast = parser.parse('SELECT case a when 1 then \'one\' when 2 then \'two\' else \'many\' end FROM t');
               expect(ast.columns).to.eql([
