@@ -49,11 +49,18 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.contain(`"col" AS "foo bar"`);
             });
 
-            ["'", '"', 'n', 't', '\\'].forEach((char) => {
+            ['"', 'n', 't', '\\'].forEach((char) => {
                 it(`should escape char ${char} "`, () => {
                     sql = `SELECT\n ' escape \\${char}'`;
                     expect(getParsedSql(sql)).to.equal(sql);
                 });
+            });
+
+            it('should handle escaping single quote from ast', () => {
+              it(`should escape char '`, () => {
+                sql = `SELECT\n ' escape \'\''`;
+                expect(getParsedSql(sql)).to.equal(sql);
+              });
             });
 
             it('should support boolean values', () => {
