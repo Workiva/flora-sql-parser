@@ -8,6 +8,9 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         eslint: {
+            options: {
+                fix: true
+            },
             target: ['lib/**/*.js']
         },
 
