@@ -327,12 +327,13 @@ where_clause
 group_by_clause
   = KW_GROUP __ KW_BY __ l:column_ref_list { return l; }
 
-column_or_map
-  = map_ref
+column_or_map_or_expr
+  = func_call
+  / map_ref
   / column_ref
 
 column_ref_list
-  = head:column_or_map tail:(__ COMMA __ column_or_map)* {
+  = head:column_or_map_or_expr tail:(__ COMMA __ column_or_map_or_expr)* {
       return createList(head, tail);
     }
 

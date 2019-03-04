@@ -702,6 +702,21 @@ describe('select', () => {
             expect(ast.groupby).to.eql([{ type:'column_ref', table: null, column: 'd' }])
         });
 
+        it('should parse single columns with a function', () => {
+            ast = parser.parse('SELECT a FROM b WHERE c = 0 GROUP BY YEAR(d)');
+            let functionArgs = {
+                type: 'expr_list',
+                value: [
+                    {
+                        type: 'column_ref', table: null, column: 'd'
+                    }
+                ]
+            };
+            expect(ast.groupby).to.eql([
+                { type: 'function', name: 'YEAR', args: functionArgs},
+            ]);
+        });
+
         it('should parse multiple columns', () => {
             ast = parser.parse('SELECT a FROM b WHERE c = 0 GROUP BY d, t.b, t.c');
 
@@ -721,6 +736,21 @@ describe('select', () => {
               { type: 'column_ref', table: 't', column: 'c' }
           ]);
       });
+        it('should parse multiple columns with a function', () => {
+           ast = parser.parse('SELECT a FROM b WHERE c = 0 GROUP BY t.b, MONTH (t.c)');
+           let functionArgs = {
+               type: 'expr_list',
+               value: [
+                   {
+                       type: 'column_ref', table: 't', column: 'c'
+                   }
+               ]
+           };
+           expect(ast.groupby).to.eql([
+               { type: 'column_ref', table: 't', column: 'b' },
+               { type: 'function', name: 'MONTH', args: functionArgs},
+           ]);
+        });
     });
 
     describe('having clause', () => {

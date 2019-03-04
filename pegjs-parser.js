@@ -2425,12 +2425,15 @@ function peg$parse(input, options) {
     return s0;
   }
 
-  function peg$parsecolumn_or_map() {
+  function peg$parsecolumn_or_map_or_expr() {
     var s0;
 
-    s0 = peg$parsemap_ref();
+    s0 = peg$parsefunc_call();
     if (s0 === peg$FAILED) {
-      s0 = peg$parsecolumn_ref();
+      s0 = peg$parsemap_ref();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parsecolumn_ref();
+      }
     }
 
     return s0;
@@ -2440,7 +2443,7 @@ function peg$parse(input, options) {
     var s0, s1, s2, s3, s4, s5, s6, s7;
 
     s0 = peg$currPos;
-    s1 = peg$parsecolumn_or_map();
+    s1 = peg$parsecolumn_or_map_or_expr();
     if (s1 !== peg$FAILED) {
       s2 = [];
       s3 = peg$currPos;
@@ -2450,7 +2453,7 @@ function peg$parse(input, options) {
         if (s5 !== peg$FAILED) {
           s6 = peg$parse__();
           if (s6 !== peg$FAILED) {
-            s7 = peg$parsecolumn_or_map();
+            s7 = peg$parsecolumn_or_map_or_expr();
             if (s7 !== peg$FAILED) {
               s4 = [s4, s5, s6, s7];
               s3 = s4;
@@ -2479,7 +2482,7 @@ function peg$parse(input, options) {
           if (s5 !== peg$FAILED) {
             s6 = peg$parse__();
             if (s6 !== peg$FAILED) {
-              s7 = peg$parsecolumn_or_map();
+              s7 = peg$parsecolumn_or_map_or_expr();
               if (s7 !== peg$FAILED) {
                 s4 = [s4, s5, s6, s7];
                 s3 = s4;

@@ -494,6 +494,11 @@ describe('AST',() => {
                     .to.equal('SELECT\n "a" \n\nFROM\n "t" \n\nGROUP BY "t"."b"');
             });
 
+            it('should support single expression with a function', () => {
+                expect(getParsedSql('SELECT a FROM t group by YEAR(t.b)'))
+                    .to.equal('SELECT\n "a" \n\nFROM\n "t" \n\nGROUP BY YEAR("t"."b")');
+            });
+
             it('should support multiple expressions', () => {
                 expect(getParsedSql('SELECT a FROM t GROUP BY t.b, t.c'))
                     .to.equal('SELECT\n "a" \n\nFROM\n "t" \n\nGROUP BY "t"."b", "t"."c"');
@@ -502,6 +507,9 @@ describe('AST',() => {
             it('should support group by with map', () => {
               expect(getParsedSql('SELECT a FROM t group by t.b, t.c[\'hello\']'))
                   .to.equal('SELECT\n "a" \n\nFROM\n "t" \n\nGROUP BY "t"."b", "t".c[\'hello\']');
+            });
+            it('should support group by with date function', () => {
+               expect(getParsedSql('SELECT a FROM t GROUP by MONTH(t.b), t.c')).to.equal('SELECT\n "a" \n\nFROM\n "t" \n\nGROUP BY MONTH("t"."b"), "t"."c"');
             });
         });
 
