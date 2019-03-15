@@ -265,6 +265,11 @@ describe('AST',() => {
                     .to.equal('SELECT\n CAST("col" AS INTEGER) \n\nFROM\n "t"');
             });
 
+            it('should support try_casts', () => {
+              expect(getParsedSql('SELECT TRY_CAST(col AS INTEGER) FROM t'))
+                  .to.equal('SELECT\n TRY_CAST("col" AS INTEGER) \n\nFROM\n "t"');
+            });
+
             it('should support casts with double', () => {
               expect(getParsedSql('SELECT CAST(col AS DOUBLE) FROM t'))
                   .to.equal('SELECT\n CAST("col" AS DOUBLE) \n\nFROM\n "t"');
