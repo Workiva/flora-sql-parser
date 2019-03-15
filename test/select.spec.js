@@ -421,6 +421,46 @@ describe('select', () => {
           }
         ]);
       });
+
+      it('should parse try_casted double columns', () => {
+        ast = parser.parse('select try_cast(t.c as double) as dc from t');
+        expect(ast.columns).to.eql([
+          { 
+            expr: { 
+              type: 'try_cast', 
+              target: {
+                dataType: 'DOUBLE'
+              }, 
+              expr: { 
+                type: 'column_ref', 
+                table: 't', 
+                column: 'c' 
+              }
+            },  
+            as: 'dc' 
+          }
+        ]);
+      });
+
+      it('should parse try_casted varchar columns', () => {
+        ast = parser.parse('select try_cast(t.c as varchar) as dc from t');
+        expect(ast.columns).to.eql([
+          { 
+            expr: { 
+              type: 'try_cast', 
+              target: {
+                dataType: 'VARCHAR'
+              }, 
+              expr: { 
+                type: 'column_ref', 
+                table: 't', 
+                column: 'c' 
+              }
+            },  
+            as: 'dc' 
+          }
+        ]);
+      });
     });
 
     describe('from clause', () => {

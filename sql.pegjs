@@ -767,7 +767,23 @@ cast_expr
       }
     };
   }
-
+ / KW_TRY_CAST __ LPAREN __ e:expr __ KW_AS __ t:data_type __ RPAREN {
+   return {
+     type: 'try_cast',
+     expr: e,
+     target: t
+   };
+  }
+  / KW_TRY_CAST __ LPAREN __ e:expr __ KW_AS __ s:signedness __ t:KW_INTEGER? __ RPAREN { /* MySQL cast to un-/signed integer */
+   return {
+     type: 'try_cast',
+     expr: e,
+    target: {
+       dataType: s + (t ? ' ' + t: '')
+    }
+   };
+ }
+ 
 signedness
   = KW_SIGNED
   / KW_UNSIGNED
@@ -941,6 +957,8 @@ KW_ELSE     = "ELSE"i     !ident_start
 KW_END      = "END"i      !ident_start
 
 KW_CAST     = "CAST"i     !ident_start
+
+KW_TRY_CAST = "TRY_CAST"i !ident_start
 
 KW_CHAR     = "CHAR"i     !ident_start { return 'CHAR'; }
 KW_VARCHAR  = "VARCHAR"i  !ident_start { return 'VARCHAR';}
