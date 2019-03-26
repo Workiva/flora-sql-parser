@@ -84,7 +84,7 @@ describe('AST',() => {
                 options: null,
                 distinct: null,
                 columns: [
-                { 
+                {
                   expr: {
                     type: 'function',
                     name: 'replace',
@@ -180,9 +180,9 @@ describe('AST',() => {
                       name: 'if',
                       args: {
                           type  : 'expr_list',
-                          value : [ 
-                            { 
-                              type: 'binary_expr', 
+                          value : [
+                            {
+                              type: 'binary_expr',
                               left: {
                                 column: 'd',
                                 table: null,
@@ -228,21 +228,21 @@ describe('AST',() => {
                   options: null,
                   distinct: null,
                   columns: [
-                  { 
-                    expr: { 
-                      type: 'aggr_func', 
-                      name: 'SUM', 
-                      args: { 
-                        distinct: 'DISTINCT', 
-                        expr: { 
-                          type: 'column_ref', 
-                          table: 't', 
-                          column: 'id' 
+                  {
+                    expr: {
+                      type: 'aggr_func',
+                      name: 'SUM',
+                      args: {
+                        distinct: 'DISTINCT',
+                        expr: {
+                          type: 'column_ref',
+                          table: 't',
+                          column: 'id'
                         }
                       }
                     },
-    
-                    as: null 
+
+                    as: null
                   }
                   ],
                   from: [{ db: null, table: 't', as: null }],
@@ -260,6 +260,14 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT\n (NOT TRUE),\n NOT "t"."foo" AS "foo" \n\nFROM\n "t"');
             });
 
+            it('should support current date function', () => {
+                sql = 'Select date_diff(\'day\', money.column1, CURRENT_DATE) as newCol from db.money';
+                var ast = parser.parse(sql);
+                expect(ast.columns[0].expr.args.value[2].type, 'function');
+                expect(ast.columns[0].expr.args.value[2].name, 'CURRENT_DATE');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_DATE) AS "newCol" \n\nFROM\n db."money"');
+            });
+
             it('should support casts', () => {
                 expect(getParsedSql('SELECT CAST(col AS INTEGER) FROM t'))
                     .to.equal('SELECT\n CAST("col" AS INTEGER) \n\nFROM\n "t"');
@@ -274,7 +282,7 @@ describe('AST',() => {
               expect(getParsedSql('SELECT CAST(col AS DOUBLE) FROM t'))
                   .to.equal('SELECT\n CAST("col" AS DOUBLE) \n\nFROM\n "t"');
             });
-            
+
             it('should support casts with boolean', () => {
               expect(getParsedSql('SELECT CAST(col AS BOOLEAN) FROM t'))
                   .to.equal('SELECT\n CAST("col" AS BOOLEAN) \n\nFROM\n "t"');
@@ -436,7 +444,7 @@ describe('AST',() => {
               sql =  'SELECT * FROM t where t.a > :my_param AND t.a = \'banana\'';
               expect(getParsedSql(sql)).to.equal('SELECT\n * \n\nFROM\n "t" \n\nWHERE\n "t"."a" > :my_param AND\n "t"."a" = \'banana\'');
             });
-            
+
             it('should support OR binary where', () => {
               sql =  'SELECT * FROM t where t.a > :my_param OR t.a = \'banana\'';
               expect(getParsedSql(sql)).to.equal('SELECT\n * \n\nFROM\n "t" \n\nWHERE\n "t"."a" > :my_param OR\n "t"."a" = \'banana\'');
@@ -447,7 +455,7 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT\n * \n\nFROM\n "t" \n\nWHERE\n "t".a[\'value\'] = \'something\'');
             });
 
-          
+
             ['BETWEEN', 'NOT BETWEEN'].forEach((operator) => {
                 it(`should support ${operator} operator`, () => {
                     sql = `SELECT a FROM t WHERE id ${operator.toLowerCase()} '1' and 1337`;
