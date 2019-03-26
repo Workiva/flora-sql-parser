@@ -268,6 +268,14 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_DATE) AS "newCol" \n\nFROM\n db."money"');
             });
 
+            it('should support current time function', () => {
+                sql = 'Select date_diff(\'day\', money.column1, CURRENT_TIME) as newCol from db.money';
+                var ast = parser.parse(sql);
+                expect(ast.columns[0].expr.args.value[2].type, 'function');
+                expect(ast.columns[0].expr.args.value[2].name, 'CURRENT_TIME');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIME) AS "newCol" \n\nFROM\n db."money"');
+            });
+
             it('should support casts', () => {
                 expect(getParsedSql('SELECT CAST(col AS INTEGER) FROM t'))
                     .to.equal('SELECT\n CAST("col" AS INTEGER) \n\nFROM\n "t"');
