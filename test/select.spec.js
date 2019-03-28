@@ -107,7 +107,7 @@ describe('select', () => {
                       name: 'concat',
                       args: {
                           type  : 'expr_list',
-                          value : [ 
+                          value : [
                             { type: 'string', value: "'"},
                             { type: 'string', value: 'hello' } ]
                       }
@@ -228,9 +228,9 @@ describe('select', () => {
                           name: 'if',
                           args: {
                               type  : 'expr_list',
-                              value : [ 
-                                { 
-                                  type: 'binary_expr', 
+                              value : [
+                                {
+                                  type: 'binary_expr',
                                   left: {
                                     column: 'd',
                                     table: null,
@@ -262,6 +262,8 @@ describe('select', () => {
                 'CURRENT_DATE',
                 'CURRENT_TIME',
                 'CURRENT_TIMESTAMP',
+                'LOCALTIME',
+                'LOCALTIMESTAMP',
                 'CURRENT_USER',
                 'SESSION_USER',
                 'USER',
@@ -308,20 +310,20 @@ describe('select', () => {
           ast = parser.parse('SELECT sum(distinct t.c) as bc FROM t');
 
           expect(ast.columns).to.eql([
-              { 
-                expr: { 
-                  type: 'aggr_func', 
-                  name: 'SUM', 
-                  args: { 
-                    distinct: 'DISTINCT', 
-                    expr: { 
-                      type: 'column_ref', 
-                      table: 't', 
-                      column: 'c' 
+              {
+                expr: {
+                  type: 'aggr_func',
+                  name: 'SUM',
+                  args: {
+                    distinct: 'DISTINCT',
+                    expr: {
+                      type: 'column_ref',
+                      table: 't',
+                      column: 'c'
                     }
                   }
-                },  
-                as: 'bc' 
+                },
+                as: 'bc'
               }
           ]);
       });
@@ -329,19 +331,19 @@ describe('select', () => {
       it('should parse casted boolean columns', () => {
         ast = parser.parse('select cast(t.c as boolean) as dc from t');
         expect(ast.columns).to.eql([
-          { 
-            expr: { 
-              type: 'cast', 
+          {
+            expr: {
+              type: 'cast',
               target: {
                 dataType: 'BOOLEAN'
-              }, 
-              expr: { 
-                type: 'column_ref', 
-                table: 't', 
-                column: 'c' 
+              },
+              expr: {
+                type: 'column_ref',
+                table: 't',
+                column: 'c'
               }
-            },  
-            as: 'dc' 
+            },
+            as: 'dc'
           }
         ]);
       });
@@ -349,27 +351,27 @@ describe('select', () => {
       it('should parse aggregated distinct casted columns', () => {
         ast = parser.parse('select count(distinct cast(t.c as boolean)) as dc from t');
         expect(ast.columns).to.eql([
-          { 
+          {
             expr: {
-              type: 'aggr_func', 
-              name: 'COUNT', 
-              args: { 
-                distinct: 'DISTINCT', 
+              type: 'aggr_func',
+              name: 'COUNT',
+              args: {
+                distinct: 'DISTINCT',
                 expr: {
                   type: 'cast',
                   target: {
                     dataType: 'BOOLEAN'
-                  }, 
-                  expr: { 
-                    type: 'column_ref', 
-                    table: 't', 
-                    column: 'c' 
+                  },
+                  expr: {
+                    type: 'column_ref',
+                    table: 't',
+                    column: 'c'
                   }
                 }
-              },  
-              
+              },
+
             },
-            as: 'dc' 
+            as: 'dc'
           }
         ]);
       });
@@ -377,27 +379,27 @@ describe('select', () => {
       it('should parse aggregated distinct sum casted columns', () => {
         ast = parser.parse('select sum(distinct cast(t.c as boolean)) as dc from t');
         expect(ast.columns).to.eql([
-          { 
+          {
             expr: {
-              type: 'aggr_func', 
-              name: 'SUM', 
-              args: { 
-                distinct: 'DISTINCT', 
+              type: 'aggr_func',
+              name: 'SUM',
+              args: {
+                distinct: 'DISTINCT',
                 expr: {
                   type: 'cast',
                   target: {
                     dataType: 'BOOLEAN'
-                  }, 
-                  expr: { 
-                    type: 'column_ref', 
-                    table: 't', 
-                    column: 'c' 
+                  },
+                  expr: {
+                    type: 'column_ref',
+                    table: 't',
+                    column: 'c'
                   }
                 }
-              },  
-              
+              },
+
             },
-            as: 'dc' 
+            as: 'dc'
           }
         ]);
       });
@@ -405,19 +407,19 @@ describe('select', () => {
       it('should parse casted double columns', () => {
         ast = parser.parse('select cast(t.c as double) as dc from t');
         expect(ast.columns).to.eql([
-          { 
-            expr: { 
-              type: 'cast', 
+          {
+            expr: {
+              type: 'cast',
               target: {
                 dataType: 'DOUBLE'
-              }, 
-              expr: { 
-                type: 'column_ref', 
-                table: 't', 
-                column: 'c' 
+              },
+              expr: {
+                type: 'column_ref',
+                table: 't',
+                column: 'c'
               }
-            },  
-            as: 'dc' 
+            },
+            as: 'dc'
           }
         ]);
       });
@@ -425,19 +427,19 @@ describe('select', () => {
       it('should parse try_casted double columns', () => {
         ast = parser.parse('select try_cast(t.c as double) as dc from t');
         expect(ast.columns).to.eql([
-          { 
-            expr: { 
-              type: 'try_cast', 
+          {
+            expr: {
+              type: 'try_cast',
               target: {
                 dataType: 'DOUBLE'
-              }, 
-              expr: { 
-                type: 'column_ref', 
-                table: 't', 
-                column: 'c' 
+              },
+              expr: {
+                type: 'column_ref',
+                table: 't',
+                column: 'c'
               }
-            },  
-            as: 'dc' 
+            },
+            as: 'dc'
           }
         ]);
       });
@@ -445,19 +447,19 @@ describe('select', () => {
       it('should parse try_casted varchar columns', () => {
         ast = parser.parse('select try_cast(t.c as varchar) as dc from t');
         expect(ast.columns).to.eql([
-          { 
-            expr: { 
-              type: 'try_cast', 
+          {
+            expr: {
+              type: 'try_cast',
               target: {
                 dataType: 'VARCHAR'
-              }, 
-              expr: { 
-                type: 'column_ref', 
-                table: 't', 
-                column: 'c' 
+              },
+              expr: {
+                type: 'column_ref',
+                table: 't',
+                column: 'c'
               }
-            },  
-            as: 'dc' 
+            },
+            as: 'dc'
           }
         ]);
       });
