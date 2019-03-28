@@ -48,6 +48,8 @@
     'FULL': true,
     'LIKE': true,
     'LIMIT': true,
+    'LOCALTIME': true,
+    'LOCALTIMESTAMP': true,
 
     'NOT': true,
     'NULL': true,
@@ -745,6 +747,8 @@ scalar_func
   = KW_CURRENT_DATE
   / KW_CURRENT_TIME
   / KW_CURRENT_TIMESTAMP
+  / KW_LOCALTIME
+  / KW_LOCALTIMESTAMP
   / KW_CURRENT_USER
   / KW_USER
   / KW_SESSION_USER
@@ -783,7 +787,7 @@ cast_expr
     }
    };
  }
- 
+
 signedness
   = KW_SIGNED
   / KW_UNSIGNED
@@ -979,6 +983,8 @@ KW_BOOLEAN  = "BOOLEAN"i  !ident_start { return 'BOOLEAN'; }
 KW_CURRENT_DATE     = "CURRENT_DATE"i !ident_start { return 'CURRENT_DATE'; }
 KW_CURRENT_TIME     = "CURRENT_TIME"i !ident_start { return 'CURRENT_TIME'; }
 KW_CURRENT_TIMESTAMP= "CURRENT_TIMESTAMP"i !ident_start { return 'CURRENT_TIMESTAMP'; }
+KW_LOCALTIME        = "LOCALTIME"i !ident_start { return 'LOCALTIME'; }
+KW_LOCALTIMESTAMP   = "LOCALTIMESTAMP"i !ident_start { return 'LOCALTIMESTAMP'; }
 KW_CURRENT_USER     = "CURRENT_USER"i !ident_start { return 'CURRENT_USER'; }
 KW_SESSION_USER     = "SESSION_USER"i !ident_start { return 'SESSION_USER'; }
 KW_SYSTEM_USER      = "SYSTEM_USER"i !ident_start { return 'SYSTEM_USER'; }

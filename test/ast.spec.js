@@ -284,6 +284,22 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIMESTAMP) AS "newCol" \n\nFROM\n db."money"');
             });
 
+            it('should support localtime function', () => {
+                sql = 'Select date_diff(\'day\', money.column1, LOCALTIME) as newCol from db.money';
+                var ast = parser.parse(sql);
+                expect(ast.columns[0].expr.args.value[2].type, 'function');
+                expect(ast.columns[0].expr.args.value[2].name, 'LOCALTIME');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIME) AS "newCol" \n\nFROM\n db."money"');
+            });
+
+            it('should support localtimestamp function', () => {
+                sql = 'Select date_diff(\'day\', money.column1, LOCALTIMESTAMP) as newCol from db.money';
+                var ast = parser.parse(sql);
+                expect(ast.columns[0].expr.args.value[2].type, 'function');
+                expect(ast.columns[0].expr.args.value[2].name, 'LOCALTIMESTAMP');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIMESTAMP) AS "newCol" \n\nFROM\n db."money"');
+            });
+
             it('should support casts', () => {
                 expect(getParsedSql('SELECT CAST(col AS INTEGER) FROM t'))
                     .to.equal('SELECT\n CAST("col" AS INTEGER) \n\nFROM\n "t"');
