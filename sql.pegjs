@@ -284,11 +284,21 @@ table_base
         t.as = alias;
         return t;
       } else {
-        return {
-          db: t.db,
-          table: t.table,
-          as: alias
-        };
+        if (t.system === null) {
+          return {
+            db: t.db,
+            table: t.table,
+            as: alias
+          };
+        } else {
+          return {
+            system: t.system,
+            db: t.db,
+            table: t.table,
+            as: alias
+          };
+        }
+        
       }
     }
   / LPAREN __ stmt:union_stmt __ RPAREN __ KW_AS? __ alias:ident {
@@ -306,9 +316,13 @@ join_op
   / (KW_INNER __)? KW_JOIN { return 'INNER JOIN'; }
 
 table_name
-  = dt:ident tail:(__ DOT __ ident)? {
-      var obj = { db: null, table: dt };
-      if (tail !== null) {
+  = dt:ident tail:(__ DOT __ ident)? tail2:(__ DOT __ ident)? {
+      var obj = { system: null, db: null, table: dt };
+      if (tail !== null && tail2 !== null) {
+        obj.system = dt;
+        obj.db = tail[3];
+        obj.table = tail2[3];
+      } else if (tail !== null) {
         obj.db = dt;
         obj.table = tail[3];
       }
