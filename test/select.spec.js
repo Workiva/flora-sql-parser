@@ -476,6 +476,11 @@ describe('select', () => {
             expect(ast.from).to.eql([{ db: 'u', table: 't', as: null }]);
         });
 
+        it('should parse tables from other systems', () => {
+          ast = parser.parse('SELECT * FROM spreadsheets.u.t as spread');
+          expect(ast.from).to.eql([{ system: 'spreadsheets', db: 'u', table: 't', as: 'spread' }]);
+        });
+
         it('should parse tables from other databases (ANSI identifier)', () => {
             ast = parser.parse('SELECT * FROM "u"."t"');
             expect(ast.from).to.eql([{ db: 'u', table: 't', as: null }]);

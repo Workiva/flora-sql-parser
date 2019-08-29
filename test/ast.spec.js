@@ -105,6 +105,60 @@ describe('AST',() => {
             expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n "t"');
           });
 
+          it('should handle a db in from statement', () => {
+            var ast = {
+              type: 'select',
+              options: null,
+              distinct: null,
+              columns: [
+              {
+                expr: {
+                  type: 'function',
+                  name: 'replace',
+                  args: {
+                      type  : 'expr_list',
+                      value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                  }
+                },
+                as: null
+              }
+              ],
+              from: [{ db: 'mydb', table: 't', as: 'hello' }],
+              where: null,
+              groupby: null,
+              limit: null
+            };
+            var sql = util.astToSQL(ast);
+            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n mydb."t" AS "hello"');
+          });
+
+          it('should handle a system in a from statement', () => {
+            var ast = {
+              type: 'select',
+              options: null,
+              distinct: null,
+              columns: [
+              {
+                expr: {
+                  type: 'function',
+                  name: 'replace',
+                  args: {
+                      type  : 'expr_list',
+                      value : [ { type: 'column_ref', table: null, column: 'd' } ]
+                  }
+                },
+                as: null
+              }
+              ],
+              from: [{ system: 'spreadsheets', db: 'mydb', table: 't', as: 'hello' }],
+              where: null,
+              groupby: null,
+              limit: null
+            };
+            var sql = util.astToSQL(ast);
+            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n spreadsheets.mydb."t" AS "hello"');
+          });
+
           it('should support case when functions', () => {
             var ast = {
               type: 'select',
