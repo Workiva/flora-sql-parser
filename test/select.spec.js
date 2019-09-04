@@ -543,6 +543,27 @@ describe('select', () => {
                 });
             });
 
+            it('should parse joins with multiple dbs and systems', () => {
+              ast = parser.parse(`SELECT * FROM spreadsheets."db".t left join spreadsheets.db2.d on d.d = d.a`);
+
+              expect(ast.from).to.eql([
+                  { system: 'spreadsheets', db: 'db', table: 't', as: null },
+                  {
+                      db: 'db2',
+                      system: 'spreadsheets',
+                      table: 'd',
+                      as: null,
+                      join: `LEFT JOIN`,
+                      on: {
+                          type: 'binary_expr',
+                          operator: '=',
+                          left: { type: 'column_ref', table: 'd', column: 'd' },
+                          right: { type: 'column_ref', table: 'd', column: 'a' }
+                      }
+                  }
+              ]);
+            });
+
             it('should parse joined subselect', () => {
                 ast = parser.parse('SELECT * FROM t1 JOIN (SELECT id, col1 FROM t2) someAlias ON t1.id = someAlias.id');
 
