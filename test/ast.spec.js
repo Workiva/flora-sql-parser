@@ -129,7 +129,7 @@ describe('AST',() => {
               limit: null
             };
             var sql = util.astToSQL(ast);
-            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n mydb."t" AS "hello"');
+            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n "mydb"."t" AS "hello"');
           });
 
           it('should handle a system in a from statement', () => {
@@ -156,7 +156,7 @@ describe('AST',() => {
               limit: null
             };
             var sql = util.astToSQL(ast);
-            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n spreadsheets.mydb."t" AS "hello"');
+            expect(sql).to.equal('SELECT\n replace("d") \n\nFROM\n spreadsheets."mydb"."t" AS "hello"');
           });
 
           it('should support case when functions', () => {
@@ -319,7 +319,7 @@ describe('AST',() => {
                 var ast = parser.parse(sql);
                 expect(ast.columns[0].expr.args.value[2].type, 'function');
                 expect(ast.columns[0].expr.args.value[2].name, 'CURRENT_DATE');
-                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_DATE) AS "newCol" \n\nFROM\n db."money"');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_DATE) AS "newCol" \n\nFROM\n "db"."money"');
             });
 
             it('should support current time function', () => {
@@ -327,7 +327,7 @@ describe('AST',() => {
                 var ast = parser.parse(sql);
                 expect(ast.columns[0].expr.args.value[2].type, 'function');
                 expect(ast.columns[0].expr.args.value[2].name, 'CURRENT_TIME');
-                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIME) AS "newCol" \n\nFROM\n db."money"');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIME) AS "newCol" \n\nFROM\n "db"."money"');
             });
 
             it('should support current time function', () => {
@@ -335,7 +335,7 @@ describe('AST',() => {
                 var ast = parser.parse(sql);
                 expect(ast.columns[0].expr.args.value[2].type, 'function');
                 expect(ast.columns[0].expr.args.value[2].name, 'CURRENT_TIMESTAMP');
-                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIMESTAMP) AS "newCol" \n\nFROM\n db."money"');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", CURRENT_TIMESTAMP) AS "newCol" \n\nFROM\n "db"."money"');
             });
 
             it('should support localtime function', () => {
@@ -343,7 +343,7 @@ describe('AST',() => {
                 var ast = parser.parse(sql);
                 expect(ast.columns[0].expr.args.value[2].type, 'function');
                 expect(ast.columns[0].expr.args.value[2].name, 'LOCALTIME');
-                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIME) AS "newCol" \n\nFROM\n db."money"');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIME) AS "newCol" \n\nFROM\n "db"."money"');
             });
 
             it('should support localtimestamp function', () => {
@@ -351,7 +351,7 @@ describe('AST',() => {
                 var ast = parser.parse(sql);
                 expect(ast.columns[0].expr.args.value[2].type, 'function');
                 expect(ast.columns[0].expr.args.value[2].name, 'LOCALTIMESTAMP');
-                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIMESTAMP) AS "newCol" \n\nFROM\n db."money"');
+                expect(getParsedSql(sql)).to.equal('SELECT\n date_diff(\'day\', "money"."column1", LOCALTIMESTAMP) AS "newCol" \n\nFROM\n "db"."money"');
             });
 
             it('should support casts', () => {
@@ -475,7 +475,7 @@ describe('AST',() => {
             ['<', '<=', '=', '!=', '>=', '>'].forEach((operator) => {
                 it(`should support simple "${operator}" comparison`, () => {
                     sql = `SELECT a fRom db.t wHERE "type" ${operator} 3`;
-                    expect(getParsedSql(sql)).to.equal(`SELECT\n "a" \n\nFROM\n db."t" \n\nWHERE\n "type" ${operator} 3`);
+                    expect(getParsedSql(sql)).to.equal(`SELECT\n "a" \n\nFROM\n "db"."t" \n\nWHERE\n "type" ${operator} 3`);
                 });
             });
 
