@@ -447,8 +447,14 @@ describe('AST',() => {
             it('should support joins with tables from other databases', () => {
                 sql = 'SELECT col1 FROM t JOIN otherdb.awesome_table at ON t.id = at.tid';
                 expect(getParsedSql(sql))
-                    .to.equal('SELECT\n "col1" \n\nFROM\n "t"\n INNER JOIN\n otherdb."awesome_table" AS "at" \nON "t"."id" = "at"."tid"');
+                    .to.equal('SELECT\n "col1" \n\nFROM\n "t"\n INNER JOIN\n "otherdb"."awesome_table" AS "at" \nON "t"."id" = "at"."tid"');
             });
+
+            it('should support joins with tables from other systems', () => {
+              sql = 'SELECT col1 FROM t JOIN spreadsheets.otherdb.awesome_table at ON t.id = at.tid';
+              expect(getParsedSql(sql))
+                  .to.equal('SELECT\n "col1" \n\nFROM\n "t"\n INNER JOIN\n spreadsheets."otherdb"."awesome_table" AS "at" \nON "t"."id" = "at"."tid"');
+          });
 
             it('should support aliases in joins', () => {
                 expect(getParsedSql('SELECT col1 FROM t1 LEFT JOIN awesome_table AS t2 ON t1.id = t2.t1id'))
