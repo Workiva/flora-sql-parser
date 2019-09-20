@@ -693,6 +693,9 @@ column_name
 ident_name
   =  start:ident_start parts:ident_part* { return start + parts.join(''); }
 
+ident_name_alphanumeric
+  =  parts:ident_part* { return parts.join(''); }
+
 ident_start = [A-Za-z_]
 
 ident_part  = [A-Za-z0-9_]
@@ -701,7 +704,7 @@ ident_part  = [A-Za-z0-9_]
 column_part  = [A-Za-z0-9_:]
 
 param
-  = l:(':' ident_name) {
+  = l:(':' ident_name_alphanumeric) {
       return { type: 'param', value: l[1] };
     }
 

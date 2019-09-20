@@ -767,6 +767,18 @@ describe('AST',() => {
                 }
             });
         });
+        
+        it('should set parameter that starts with a number', () => {
+            ast = parser.parse('SELECT col1 FROM t WHERE col2 = :2name');
+            ast = util.replaceParams(ast, { '2name': 'John Doe' });
+
+            expect(ast.where).to.eql({
+                type: 'binary_expr',
+                operator: '=',
+                left: { type: 'column_ref', table: null, column: 'col2' },
+                right: { type: 'string', value: 'John Doe' }
+            });
+        });
 
         it('should set parameter with string', () => {
             ast = parser.parse('SELECT col1 FROM t WHERE col2 = :name');
