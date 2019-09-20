@@ -657,6 +657,17 @@ describe('select', () => {
             });
         });
 
+        it('should parse parameters that start with a number', () => {
+            ast = parser.parse('SELECT * FROM t where t.a > :1_my_param');
+
+            expect(ast.where).to.eql({
+                type: 'binary_expr',
+                operator: '>',
+                left: { type: 'column_ref', table: 't', column: 'a' },
+                right: { type: 'param', value: '1_my_param' }
+            });
+        });
+        
         it('should parse map comparison', () => {
             ast = parser.parse('SELECT * FROM t where "t".a[\'my_key\'] = \'hello\'');
 

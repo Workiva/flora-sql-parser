@@ -7,6 +7,13 @@ Flora SQL Parser
 
 Parse simple SQL statements into an abstract syntax tree (AST) and convert it back to SQL.
 
+Setup
+-----
+Run `npm install`
+
+Tests
+-----
+Run `npm run test`
 
 Usage
 -----
