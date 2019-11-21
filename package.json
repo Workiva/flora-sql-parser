@@ -53,20 +53,20 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "debug": "2.6.9",
-    "lodash": "4.17.5",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.4",
     "grunt-cli": "^1.2.0",
-    "pegjs": "^0.10.0",
     "grunt-eslint": "^20.2.0",
     "grunt-exec": "^3.0.0",
     "grunt-mocha-istanbul": "^5.0.1",
     "grunt-mocha-test": "^0.13.2",
     "istanbul": "^0.4.2",
     "load-grunt-tasks": "^4.0.0",
+    "lodash": "^4.17.15",
     "mocha": "^5.2.0",
-    "mocha-bamboo-reporter": "^1.1.1"
+    "mocha-bamboo-reporter": "^1.1.1",
+    "pegjs": "^0.10.0"
   }
 }

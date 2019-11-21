@@ -78,6 +78,49 @@ describe('AST',() => {
                 expect(getParsedSql(sql)).to.equal(sql);
             });
 
+            it('should support operations including negative unary', () => {
+              var ast = {
+                type: 'select',
+                options: null,
+                distinct: null,
+                columns: [{
+                expr: {
+                    type: 'unary_expr',
+                    operator: '-',
+                    expr: {
+                        left : {
+                          column: 'col',
+                          table: 't',
+                          type: 'column_ref'
+                        },
+                        operator: '+',
+                        parentheses: true,
+                        right: {
+                          left: {
+                            type: 'number',
+                            value: 4
+                          },
+                          operator: '*',
+                          right: {
+                            type: 'number',
+                            value: 3
+                          },
+                          type: 'binary_expr'
+                        },
+                        type: 'binary_expr'
+                    }
+                },
+                as: 'something'
+                  }],
+                  from: [{ db: null, table: 't', as: null }],
+                  where: null,
+                  groupby: null,
+                  limit: null
+              };
+              var sql = util.astToSQL(ast);
+              expect(sql).to.equal('SELECT\n -("t"."col" + 4 * 3) AS "something" \n\nFROM\n "t"');
+            })
+
             it('should support replace functions', () => {
               var ast = {
                 type: 'select',
