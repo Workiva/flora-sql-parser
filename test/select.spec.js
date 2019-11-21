@@ -98,7 +98,7 @@ describe('select', () => {
           });
 
           it('should handle negaive literals', () => {
-            ast = parser.parse('SELECT -("t"."col" + -4 * 3) as "something" from t');
+            ast = parser.parse('SELECT -("t"."col" - -4 * 3) as "something" from t');
             expect(ast.columns).to.eql([
               {
                   expr: {
@@ -110,7 +110,7 @@ describe('select', () => {
                             table: 't',
                             type: 'column_ref'
                           },
-                          operator: '+',
+                          operator: '-',
                           parentheses: true,
                           right: {
                             left: {
