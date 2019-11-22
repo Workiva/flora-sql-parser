@@ -604,6 +604,9 @@ multiplicative_expr
     tail:(__ multiplicative_operator  __ primary)* {
       return createBinaryExprChain(head, tail)
     }
+  / ("-") __ expr:multiplicative_expr {
+      return createUnaryExpr('-', expr);
+    }
 
 multiplicative_operator
   = "*" / "/" / "%"

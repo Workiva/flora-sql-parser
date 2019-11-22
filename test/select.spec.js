@@ -61,6 +61,78 @@ describe('select', () => {
             ]);
         });
 
+        describe('operations', () => {
+          it('should handle combinations of negatives, multiplication and addition', () => {
+            ast = parser.parse('SELECT -("t"."col" + 4 * 3) as "something" from t');
+            expect(ast.columns).to.eql([
+              {
+                  expr: {
+                      type: 'unary_expr',
+                      operator: '-',
+                      expr: {
+                          left : {
+                            column: 'col',
+                            table: 't',
+                            type: 'column_ref'
+                          },
+                          operator: '+',
+                          parentheses: true,
+                          right: {
+                            left: {
+                              type: 'number',
+                              value: 4
+                            },
+                            operator: '*',
+                            right: {
+                              type: 'number',
+                              value: 3
+                            },
+                            type: 'binary_expr'
+                          },
+                          type: 'binary_expr'
+                      }
+                  },
+                  as: 'something'
+              }
+            ]);
+          });
+
+          it('should handle negaive literals', () => {
+            ast = parser.parse('SELECT -("t"."col" - -4 * 3) as "something" from t');
+            expect(ast.columns).to.eql([
+              {
+                  expr: {
+                      type: 'unary_expr',
+                      operator: '-',
+                      expr: {
+                          left : {
+                            column: 'col',
+                            table: 't',
+                            type: 'column_ref'
+                          },
+                          operator: '-',
+                          parentheses: true,
+                          right: {
+                            left: {
+                              type: 'number',
+                              value: -4
+                            },
+                            operator: '*',
+                            right: {
+                              type: 'number',
+                              value: 3
+                            },
+                            type: 'binary_expr'
+                          },
+                          type: 'binary_expr'
+                      }
+                  },
+                  as: 'something'
+              }
+          ]);
+          });
+        });
+
         describe('functions', () => {
             it('should parse function expression', () => {
                 ast = parser.parse('SELECT fun(d) FROM t');
