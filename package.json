@@ -47,7 +47,7 @@
     "node": ">=6"
   },
   "dependencies": {
-    "flora-errors": "^0.8.0",
+    "flora-errors": "^2.0.0",
     "has": "^1.0.3"
   },
   "devDependencies": {
